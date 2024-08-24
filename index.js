@@ -53,8 +53,31 @@ const generateId = () => {
 }
 
 app.post('/api/persons', (request, response) => {
-  const person = request.body
-  person.id = generateId()
+  const body = request.body
+
+  if (!body.name) {
+    return response.status(400).json({
+      error: 'name missing'
+    })
+  }
+
+  if (!body.number) {
+    return response.status(400).json({
+      error: 'number missing'
+    })
+  }
+
+  if (persons.map(person => person.name).includes(body.name)) {
+    return response.status(400).json({
+      error: 'name already exists'
+    })
+  }
+
+  const person = {
+    name: body.name,
+    number: body.number,
+    id: generateId()
+  }
 
   persons = persons.concat(person)
 
